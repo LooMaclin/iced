@@ -111,7 +111,7 @@ impl State {
     }
 }
 
-impl<'a, Message, Renderer> Widget<Message, Renderer>
+impl<'a, Message, Renderer> Widget<'a, Message, Renderer>
     for Slider<'a, Message, Renderer>
 where
     Renderer: self::Renderer,

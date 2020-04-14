@@ -137,7 +137,7 @@ impl<'a> Canvas<'a> {
     }
 }
 
-impl<'a, Message> Widget<Message, Renderer> for Canvas<'a> {
+impl<'a, Message> Widget<'a, Message, Renderer> for Canvas<'a> {
     fn width(&self) -> Length {
         self.width
     }

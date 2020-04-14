@@ -34,7 +34,7 @@
 //! [`window::Backend`]: window/trait.Backend.html
 //! [`UserInterface`]: struct.UserInterface.html
 //! [renderer]: renderer/index.html
-#![deny(missing_docs)]
+//#![deny(missing_docs)]
 #![deny(missing_debug_implementations)]
 #![deny(unused_results)]
 #![forbid(unsafe_code)]
@@ -51,6 +51,7 @@ mod element;
 mod event;
 mod hasher;
 mod mouse_cursor;
+mod overlay;
 mod runtime;
 mod user_interface;
 
@@ -69,6 +70,7 @@ pub use event::Event;
 pub use hasher::Hasher;
 pub use layout::Layout;
 pub use mouse_cursor::MouseCursor;
+pub use overlay::Overlay;
 pub use renderer::Renderer;
 pub use runtime::Runtime;
 pub use subscription::Subscription;

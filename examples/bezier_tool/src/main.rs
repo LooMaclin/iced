@@ -65,7 +65,7 @@ mod bezier {
         }
     }
 
-    impl<'a, Message> Widget<Message, Renderer> for Bezier<'a, Message> {
+    impl<'a, Message> Widget<'a, Message, Renderer> for Bezier<'a, Message> {
         fn width(&self) -> Length {
             Length::Fill
         }

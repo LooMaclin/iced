@@ -27,7 +27,7 @@ mod rainbow {
         }
     }
 
-    impl<Message> Widget<Message, Renderer> for Rainbow {
+    impl<'a, Message> Widget<'a, Message, Renderer> for Rainbow {
         fn width(&self) -> Length {
             Length::Fill
         }

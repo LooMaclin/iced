@@ -457,7 +457,7 @@ impl layout::Debugger for Renderer {
     fn explain<Message>(
         &mut self,
         defaults: &Defaults,
-        widget: &dyn Widget<Message, Self>,
+        widget: &dyn Widget<'_, Message, Self>,
         layout: Layout<'_>,
         cursor_position: Point,
         color: Color,

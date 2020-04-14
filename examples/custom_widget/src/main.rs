@@ -25,7 +25,7 @@ mod circle {
         }
     }
 
-    impl<Message> Widget<Message, Renderer> for Circle {
+    impl<'a, Message> Widget<'a, Message, Renderer> for Circle {
         fn width(&self) -> Length {
             Length::Shrink
         }
