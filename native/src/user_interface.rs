@@ -1,5 +1,6 @@
 use crate::{
-    input::mouse, layout, Clipboard, Element, Event, Layout, Point, Size,
+    input::mouse, layout, Clipboard, Element, Event, Layout, Overlay, Point,
+    Size,
 };
 
 use std::hash::Hasher;
@@ -21,11 +22,16 @@ use std::hash::Hasher;
 /// [`UserInterface`]: struct.UserInterface.html
 #[allow(missing_debug_implementations)]
 pub struct UserInterface<'a, Message, Renderer> {
-    hash: u64,
-    root: Element<'a, Message, Renderer>,
-    layout: layout::Node,
+    base: Layer<Element<'a, Message, Renderer>>,
+    overlay: Option<Layer<Overlay<'a, Message, Renderer>>>,
     bounds: Size,
     cursor_position: Point,
+}
+
+struct Layer<T> {
+    root: T,
+    layout: layout::Node,
+    hash: u64,
 }
 
 impl<'a, Message, Renderer> UserInterface<'a, Message, Renderer>
@@ -95,25 +101,43 @@ where
         cache: Cache,
         renderer: &mut Renderer,
     ) -> Self {
-        let root = root.into();
+        let mut root = root.into();
 
-        let hash = {
-            let hasher = &mut crate::Hasher::default();
-            root.hash_layout(hasher);
+        let (base, overlay) = {
+            let hash = {
+                let hasher = &mut crate::Hasher::default();
+                root.hash_layout(hasher);
 
-            hasher.finish()
+                hasher.finish()
+            };
+
+            let layout = if hash == cache.hash && bounds == cache.bounds {
+                cache.layout
+            } else {
+                renderer.layout(&root, &layout::Limits::new(Size::ZERO, bounds))
+            };
+
+            let overlay = root.overlay(Layout::new(&layout));
+
+            (Layer { root, layout, hash }, overlay)
         };
 
-        let layout = if hash == cache.hash && bounds == cache.bounds {
-            cache.layout
-        } else {
-            renderer.layout(&root, &layout::Limits::new(Size::ZERO, bounds))
-        };
+        let overlay = overlay.map(|root| {
+            let hash = {
+                let hasher = &mut crate::Hasher::default();
+                root.hash_layout(hasher);
+
+                hasher.finish()
+            };
+
+            let layout = root.layout(&renderer, bounds);
+
+            Layer { root, layout, hash }
+        });
 
         UserInterface {
-            hash,
-            root,
-            layout,
+            base,
+            overlay,
             bounds,
             cursor_position: cache.cursor_position,
         }
@@ -199,14 +223,42 @@ where
                 _ => {}
             }
 
-            self.root.widget.on_event(
-                event,
-                Layout::new(&self.layout),
-                self.cursor_position,
-                &mut messages,
-                renderer,
-                clipboard,
-            );
+            if let Some(overlay) = &mut self.overlay {
+                overlay.root.on_event(
+                    event.clone(),
+                    Layout::new(&overlay.layout),
+                    self.cursor_position,
+                    &mut messages,
+                    renderer,
+                    clipboard,
+                );
+
+                let base_cursor =
+                    if overlay.layout.bounds().contains(self.cursor_position) {
+                        // TODO: Encode cursor availability
+                        Point::new(-1.0, -1.0)
+                    } else {
+                        self.cursor_position
+                    };
+
+                self.base.root.widget.on_event(
+                    event,
+                    Layout::new(&self.base.layout),
+                    base_cursor,
+                    &mut messages,
+                    renderer,
+                    clipboard,
+                );
+            } else {
+                self.base.root.widget.on_event(
+                    event,
+                    Layout::new(&self.base.layout),
+                    self.cursor_position,
+                    &mut messages,
+                    renderer,
+                    clipboard,
+                );
+            }
         }
 
         messages
@@ -276,12 +328,42 @@ where
     /// }
     /// ```
     pub fn draw(&self, renderer: &mut Renderer) -> Renderer::Output {
-        self.root.widget.draw(
-            renderer,
-            &Renderer::Defaults::default(),
-            Layout::new(&self.layout),
-            self.cursor_position,
-        )
+        if let Some(overlay) = &self.overlay {
+            let overlay_bounds = overlay.layout.bounds();
+
+            let base_cursor = if overlay_bounds.contains(self.cursor_position) {
+                Point::new(-1.0, -1.0)
+            } else {
+                self.cursor_position
+            };
+
+            let base_primitives = self.base.root.widget.draw(
+                renderer,
+                &Renderer::Defaults::default(),
+                Layout::new(&self.base.layout),
+                base_cursor,
+            );
+
+            let overlay_primitives = overlay.root.draw(
+                renderer,
+                &Renderer::Defaults::default(),
+                Layout::new(&overlay.layout),
+                self.cursor_position,
+            );
+
+            renderer.overlay(
+                base_primitives,
+                overlay_primitives,
+                overlay_bounds,
+            )
+        } else {
+            self.base.root.widget.draw(
+                renderer,
+                &Renderer::Defaults::default(),
+                Layout::new(&self.base.layout),
+                self.cursor_position,
+            )
+        }
     }
 
     /// Extract the [`Cache`] of the [`UserInterface`], consuming it in the
@@ -291,8 +373,8 @@ where
     /// [`UserInterface`]: struct.UserInterface.html
     pub fn into_cache(self) -> Cache {
         Cache {
-            hash: self.hash,
-            layout: self.layout,
+            hash: self.base.hash,
+            layout: self.base.layout,
             bounds: self.bounds,
             cursor_position: self.cursor_position,
         }

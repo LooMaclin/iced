@@ -451,6 +451,31 @@ impl iced_native::Renderer for Renderer {
 
         node
     }
+
+    fn overlay(
+        &mut self,
+        (base_primitive, base_cursor): (Primitive, MouseCursor),
+        (overlay_primitives, overlay_cursor): (Primitive, MouseCursor),
+        overlay_bounds: Rectangle,
+    ) -> (Primitive, MouseCursor) {
+        (
+            Primitive::Group {
+                primitives: vec![
+                    base_primitive,
+                    Primitive::Clip {
+                        bounds: overlay_bounds,
+                        offset: Vector::new(0, 0),
+                        content: Box::new(overlay_primitives),
+                    },
+                ],
+            },
+            if base_cursor > overlay_cursor {
+                base_cursor
+            } else {
+                overlay_cursor
+            },
+        )
+    }
 }
 
 impl layout::Debugger for Renderer {
