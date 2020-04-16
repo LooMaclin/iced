@@ -39,6 +39,7 @@ members = [
     "winit",
     "examples/bezier_tool",
     "examples/clock",
+    "examples/combo_box",
     "examples/counter",
     "examples/custom_widget",
     "examples/download_progress",
