@@ -2,7 +2,7 @@ use crate::{
     container,
     input::{self, mouse},
     layout, scrollable, Clipboard, Container, Element, Event, Hasher, Layer,
-    Layout, Length, Point, Rectangle, Scrollable, Size, Widget,
+    Layout, Length, Point, Rectangle, Scrollable, Size, Vector, Widget,
 };
 use std::borrow::Cow;
 
@@ -10,6 +10,7 @@ pub struct Menu<'a, Message, Renderer: self::Renderer> {
     container: Container<'a, Message, Renderer>,
     is_open: &'a mut bool,
     width: u16,
+    target_height: f32,
 }
 
 #[derive(Default)]
@@ -40,6 +41,7 @@ where
         options: impl Into<Cow<'a, [T]>>,
         on_selected: Box<dyn Fn(T) -> Message>,
         width: u16,
+        target_height: f32,
         text_size: u16,
         padding: u16,
     ) -> Self
@@ -62,6 +64,7 @@ where
             container,
             is_open: &mut state.is_open,
             width,
+            target_height,
         }
     }
 }
@@ -77,15 +80,29 @@ where
         bounds: Size,
         position: Point,
     ) -> layout::Node {
+        let space_below = bounds.height - (position.y + self.target_height);
+        let space_above = position.y;
+
         let limits = layout::Limits::new(
             Size::ZERO,
-            Size::new(bounds.width - position.x, bounds.height - position.y),
+            Size::new(
+                bounds.width - position.x,
+                if space_below > space_above {
+                    space_below
+                } else {
+                    space_above
+                },
+            ),
         )
         .width(Length::Units(self.width));
 
         let mut node = self.container.layout(renderer, &limits);
 
-        node.move_to(position);
+        node.move_to(if space_below > space_above {
+            position + Vector::new(0.0, self.target_height)
+        } else {
+            position - Vector::new(0.0, node.size().height)
+        });
 
         node
     }
