@@ -3,7 +3,7 @@ use crate::{
     column,
     input::{mouse, ButtonState},
     layout, Align, Clipboard, Column, Element, Event, Hasher, Layout, Length,
-    Point, Rectangle, Size, Widget,
+    Overlay, Point, Rectangle, Size, Vector, Widget,
 };
 
 use std::{f32, hash::Hash, u32};
@@ -318,6 +318,22 @@ where
         self.max_height.hash(state);
 
         self.content.hash_layout(state)
+    }
+
+    fn overlay(
+        &mut self,
+        layout: Layout<'_>,
+    ) -> Option<Overlay<'a, Message, Renderer>> {
+        self.content
+            .overlay(layout.children().next().unwrap())
+            .map(|overlay| {
+                let bounds = layout.bounds();
+                let content_layout = layout.children().next().unwrap();
+                let content_bounds = content_layout.bounds();
+                let offset = self.state.offset(bounds, content_bounds);
+
+                overlay.translate(Vector::new(0.0, -(offset as f32)))
+            })
     }
 }
 
