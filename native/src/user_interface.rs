@@ -217,6 +217,14 @@ where
             }
 
             if let Some(overlay) = &mut self.overlay {
+                let base_cursor =
+                    if overlay.layout.bounds().contains(self.cursor_position) {
+                        // TODO: Encode cursor availability
+                        Point::new(-1.0, -1.0)
+                    } else {
+                        self.cursor_position
+                    };
+
                 overlay.root.on_event(
                     event.clone(),
                     Layout::new(&overlay.layout),
@@ -225,14 +233,6 @@ where
                     renderer,
                     clipboard,
                 );
-
-                let base_cursor =
-                    if overlay.layout.bounds().contains(self.cursor_position) {
-                        // TODO: Encode cursor availability
-                        Point::new(-1.0, -1.0)
-                    } else {
-                        self.cursor_position
-                    };
 
                 self.base.root.widget.on_event(
                     event,

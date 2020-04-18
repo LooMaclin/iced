@@ -19,7 +19,7 @@
 #[cfg(not(target_arch = "wasm32"))]
 mod platform {
     pub use iced_wgpu::widget::{
-        button, checkbox, container, pane_grid, progress_bar, radio,
+        button, checkbox, combo_box, container, pane_grid, progress_bar, radio,
         scrollable, slider, text_input,
     };
 
@@ -43,10 +43,10 @@ mod platform {
 
     #[doc(no_inline)]
     pub use {
-        button::Button, checkbox::Checkbox, container::Container, image::Image,
-        pane_grid::PaneGrid, progress_bar::ProgressBar, radio::Radio,
-        scrollable::Scrollable, slider::Slider, svg::Svg,
-        text_input::TextInput,
+        button::Button, checkbox::Checkbox, combo_box::ComboBox,
+        container::Container, image::Image, pane_grid::PaneGrid,
+        progress_bar::ProgressBar, radio::Radio, scrollable::Scrollable,
+        slider::Slider, svg::Svg, text_input::TextInput,
     };
 
     #[cfg(feature = "canvas")]

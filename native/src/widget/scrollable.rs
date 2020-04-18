@@ -115,7 +115,7 @@ impl<'a, Message, Renderer: self::Renderer> Scrollable<'a, Message, Renderer> {
 impl<'a, Message, Renderer> Widget<'a, Message, Renderer>
     for Scrollable<'a, Message, Renderer>
 where
-    Renderer: self::Renderer + column::Renderer,
+    Renderer: self::Renderer,
 {
     fn width(&self) -> Length {
         Widget::<Message, Renderer>::width(&self.content)
@@ -458,7 +458,7 @@ pub struct Scroller {
 ///
 /// [`Scrollable`]: struct.Scrollable.html
 /// [renderer]: ../../renderer/index.html
-pub trait Renderer: crate::Renderer + Sized {
+pub trait Renderer: column::Renderer + Sized {
     /// The style supported by this renderer.
     type Style: Default;
 
@@ -506,7 +506,7 @@ pub trait Renderer: crate::Renderer + Sized {
 impl<'a, Message, Renderer> From<Scrollable<'a, Message, Renderer>>
     for Element<'a, Message, Renderer>
 where
-    Renderer: 'a + self::Renderer + column::Renderer,
+    Renderer: 'a + self::Renderer,
     Message: 'a,
 {
     fn from(

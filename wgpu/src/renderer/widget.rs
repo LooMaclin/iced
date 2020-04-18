@@ -1,6 +1,7 @@
 mod button;
 mod checkbox;
 mod column;
+mod combo_box;
 mod container;
 mod pane_grid;
 mod progress_bar;

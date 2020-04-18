@@ -35,11 +35,12 @@
 //! [`UserInterface`]: struct.UserInterface.html
 //! [renderer]: renderer/index.html
 //#![deny(missing_docs)]
-#![deny(missing_debug_implementations)]
+//#![deny(missing_debug_implementations)]
 #![deny(unused_results)]
 #![forbid(unsafe_code)]
 #![forbid(rust_2018_idioms)]
 pub mod input;
+pub mod layer;
 pub mod layout;
 pub mod renderer;
 pub mod subscription;
@@ -50,7 +51,6 @@ mod clipboard;
 mod element;
 mod event;
 mod hasher;
-mod layer;
 mod mouse_cursor;
 mod overlay;
 mod runtime;
