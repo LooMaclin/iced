@@ -6,10 +6,11 @@ use std::{cell::RefCell, collections::HashMap};
 
 pub const BUILTIN_ICONS: iced_native::Font = iced_native::Font::External {
     name: "iced_wgpu icons",
-    bytes: include_bytes!("text/icons.ttf"),
+    bytes: include_bytes!("../fonts/icons.ttf"),
 };
 
 pub const CHECKMARK_ICON: char = '\u{F00C}';
+pub const ARROW_DOWN_ICON: char = '\u{E800}';
 
 const FALLBACK_FONT: &[u8] = include_bytes!("../fonts/Lato-Regular.ttf");
 
