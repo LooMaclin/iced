@@ -1,6 +1,6 @@
 [package]
 name = "iced_wgpu"
-version = "0.2.1"
+version = "0.2.2"
 authors = ["Héctor Ramón Jiménez <hector0193@gmail.com>"]
 edition = "2018"
 description = "A wgpu renderer for Iced"
@@ -18,9 +18,12 @@ zerocopy = "0.3"
 glyph_brush = "0.6"
 raw-window-handle = "0.3"
 glam = "0.8"
-font-kit = "0.4"
+font-kit = "0.6"
 log = "0.4"
-guillotiere = "0.4"
+guillotiere = "0.5"
+# Pin `gfx-memory` until https://github.com/gfx-rs/wgpu-rs/issues/261 is
+# resolved
+gfx-memory = "=0.1.1"
 
 [dependencies.iced_native]
 version = "0.2"
@@ -31,11 +34,11 @@ version = "0.1"
 path = "../style"
 
 [dependencies.image]
-version = "0.22"
+version = "0.23"
 optional = true
 
 [dependencies.resvg]
-version = "0.8"
+version = "0.9"
 features = ["raqote-backend"]
 optional = true
 

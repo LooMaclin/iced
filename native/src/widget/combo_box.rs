@@ -1,7 +1,6 @@
 use crate::{
-    input::{self, mouse},
     layer::{self, menu},
-    layout, scrollable, text, Clipboard, Element, Event, Font, Hasher, Layout,
+    layout, mouse, scrollable, text, Clipboard, Element, Event, Hasher, Layout,
     Length, Overlay, Point, Rectangle, Size, Widget,
 };
 use std::borrow::Cow;
@@ -113,7 +112,7 @@ where
                         let (width, _) = renderer.measure(
                             &label,
                             text_size,
-                            Font::Default,
+                            Renderer::Font::default(),
                             Size::new(f32::INFINITY, f32::INFINITY),
                         );
 
@@ -165,10 +164,7 @@ where
         _clipboard: Option<&dyn Clipboard>,
     ) {
         match event {
-            Event::Mouse(mouse::Event::Input {
-                button: mouse::Button::Left,
-                state: input::ButtonState::Pressed,
-            }) => {
+            Event::Mouse(mouse::Event::ButtonPressed(mouse::Button::Left)) => {
                 if let Some(internal) = &mut self.internal {
                     if layout.bounds().contains(cursor_position) {
                         let selected = self.selected.as_ref();

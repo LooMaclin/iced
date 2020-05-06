@@ -1,8 +1,7 @@
 use crate::{
-    container,
-    input::{self, mouse},
-    layout, scrollable, Clipboard, Container, Element, Event, Hasher, Layer,
-    Layout, Length, Point, Rectangle, Scrollable, Size, Vector, Widget,
+    container, layout, mouse, scrollable, Clipboard, Container, Element, Event,
+    Hasher, Layer, Layout, Length, Point, Rectangle, Scrollable, Size, Vector,
+    Widget,
 };
 use std::borrow::Cow;
 
@@ -136,11 +135,9 @@ where
         );
 
         match event {
-            Event::Mouse(mouse::Event::Input {
-                button: mouse::Button::Left,
-                state: input::ButtonState::Pressed,
-            }) if !bounds.contains(cursor_position)
-                || current_messages < messages.len() =>
+            Event::Mouse(mouse::Event::ButtonPressed(mouse::Button::Left))
+                if !bounds.contains(cursor_position)
+                    || current_messages < messages.len() =>
             {
                 *self.is_open = false;
             }
@@ -248,10 +245,7 @@ where
         _clipboard: Option<&dyn Clipboard>,
     ) {
         match event {
-            Event::Mouse(mouse::Event::Input {
-                button: mouse::Button::Left,
-                state: input::ButtonState::Pressed,
-            }) => {
+            Event::Mouse(mouse::Event::ButtonPressed(mouse::Button::Left)) => {
                 let bounds = layout.bounds();
 
                 if bounds.contains(cursor_position) {

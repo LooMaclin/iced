@@ -1,7 +1,7 @@
 use crate::{Primitive, Renderer};
 use iced_native::{
-    Background, Color, Font, HorizontalAlignment, MouseCursor, Point,
-    Rectangle, VerticalAlignment,
+    mouse, Background, Color, Font, HorizontalAlignment, Point, Rectangle,
+    VerticalAlignment,
 };
 
 impl iced_native::combo_box::Renderer for Renderer {
@@ -66,9 +66,9 @@ impl iced_native::combo_box::Renderer for Renderer {
                 },
             },
             if is_mouse_over {
-                MouseCursor::Pointer
+                mouse::Interaction::Pointer
             } else {
-                MouseCursor::OutOfBounds
+                mouse::Interaction::default()
             },
         )
     }

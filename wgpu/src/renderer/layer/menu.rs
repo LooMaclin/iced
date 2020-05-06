@@ -1,6 +1,6 @@
 use crate::{Primitive, Renderer};
 use iced_native::{
-    layer, Background, Color, Font, HorizontalAlignment, MouseCursor, Point,
+    layer, mouse, Background, Color, Font, HorizontalAlignment, Point,
     Rectangle, VerticalAlignment,
 };
 
@@ -89,9 +89,9 @@ impl layer::menu::Renderer for Renderer {
         (
             Primitive::Group { primitives },
             if is_mouse_over {
-                MouseCursor::Pointer
+                mouse::Interaction::Pointer
             } else {
-                MouseCursor::OutOfBounds
+                mouse::Interaction::default()
             },
         )
     }

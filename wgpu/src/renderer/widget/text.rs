@@ -1,12 +1,14 @@
 use crate::{Primitive, Renderer};
 use iced_native::{
-    text, Color, Font, HorizontalAlignment, MouseCursor, Rectangle, Size,
+    mouse, text, Color, Font, HorizontalAlignment, Rectangle, Size,
     VerticalAlignment,
 };
 
 use std::f32;
 
 impl text::Renderer for Renderer {
+    type Font = Font;
+
     const DEFAULT_SIZE: u16 = 20;
 
     fn measure(
@@ -53,7 +55,7 @@ impl text::Renderer for Renderer {
                 horizontal_alignment,
                 vertical_alignment,
             },
-            MouseCursor::OutOfBounds,
+            mouse::Interaction::default(),
         )
     }
 }

@@ -1,6 +1,5 @@
 use crate::{
-    input::mouse, layout, Clipboard, Element, Event, Layout, Overlay, Point,
-    Size,
+    layout, mouse, Clipboard, Element, Event, Layout, Overlay, Point, Size,
 };
 
 use std::hash::Hasher;
